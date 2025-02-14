@@ -1,26 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>TODO List</title>
+    <title>Η Μουσική Μου Συλλογή</title>
 </head>
 <body>
-    <h1>TODO List</h1>
+    <h1>Η Μουσική Μου Συλλογή</h1>
 
     <form action="/add" method="post">
-        <input type="text" name="text" placeholder="Προσθήκη TODO">
-        <button type="submit">Προσθήκη</button>
+        Τίτλος: <input type="text" name="title" placeholder="Τίτλος τραγουδιού"><br>
+        Καλλιτέχνης: <input type="text" name="artist" placeholder="Καλλιτέχνης"><br>
+        <button type="submit">Προσθήκη Τραγουδιού</button>
     </form>
 
+    <h2>Λίστα Τραγουδιών</h2>
     <ul>
-        {% for todo in todos %}
+        {% for song in songs %}
         <li>
-            {% if todo.complete == False %}
-                {{ todo.text }}
-                <a href="/complete/{{ todo.id }}">Ολοκλήρωση</a>
-                <a href="/delete/{{ todo.id }}">Διαγραφή</a>
-            {% else %}
-                <strike>{{ todo.text }}</strike>
-            {% endif %}
+            {{ song.title }} - {{ song.artist }}
+            <a href="/delete/{{ song.id }}">Διαγραφή</a>
         </li>
         {% endfor %}
     </ul>
