@@ -7,7 +7,7 @@
     <h1>Η Μουσική Μου Συλλογή</h1>
 
     <form action="/search" method="post">
-        Αναζήτηση στο Spotify: <input type="text" name="query" placeholder="Αναζήτηση τραγουδιού">
+        Αναζήτηση στο Spotify: <input type="text" name="query" placeholder="Αναζήτηση τραγουδιού" value="{{ query }}">
         <button type="submit">Αναζήτηση</button>
     </form>
 
@@ -20,6 +20,7 @@
             <form action="/add" method="post">
                 <input type="hidden" name="title" value="{{ song.title }}">
                 <input type="hidden" name="artist" value="{{ song.artist }}">
+                <input type="hidden" name="query" value="{{ query }}">  <!-- Κρυφό πεδίο για το query -->
                 <button type="submit">Προσθήκη στη Συλλογή</button>
             </form>
         </li>
