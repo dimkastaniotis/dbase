@@ -1,39 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Η Μουσική Μου Συλλογή</title>
+    <title>Οι Μουσικές Μου Λίστες</title>
 </head>
 <body>
-    <h1>Η Μουσική Μου Συλλογή</h1>
+    <h1>Οι Μουσικές Μου Λίστες</h1>
 
-    <form action="/search" method="post">
-        Αναζήτηση στο Spotify: <input type="text" name="query" placeholder="Αναζήτηση τραγουδιού" value="{{ query }}">
-        <button type="submit">Αναζήτηση</button>
+    <form action="/create_playlist" method="post">
+        Όνομα Λίστας: <input type="text" name="name" placeholder="Όνομα λίστας">
+        <button type="submit">Δημιουργία Λίστας</button>
     </form>
 
-    {% if search_results %}
-    <h2>Αποτελέσματα Αναζήτησης</h2>
+    <h2>Λίστες Μουσικής</h2>
     <ul>
-        {% for song in search_results %}
+        {% for playlist in playlists %}
         <li>
-            {{ song.title }} - {{ song.artist }}
-            <form action="/add" method="post">
-                <input type="hidden" name="title" value="{{ song.title }}">
-                <input type="hidden" name="artist" value="{{ song.artist }}">
-                <input type="hidden" name="query" value="{{ query }}">  <!-- Κρυφό πεδίο για το query -->
-                <button type="submit">Προσθήκη στη Συλλογή</button>
-            </form>
-        </li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-
-    <h2>Λίστα Τραγουδιών</h2>
-    <ul>
-        {% for song in songs %}
-        <li>
-            {{ song.title }} - {{ song.artist }}
-            <a href="/delete/{{ song.id }}">Διαγραφή</a>
+            <a href="/playlist/{{ playlist.id }}">{{ playlist.name }}</a>
         </li>
         {% endfor %}
     </ul>
