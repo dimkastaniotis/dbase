@@ -5,6 +5,7 @@
 </head>
 <body>
     <h1>{{ playlist.name }}</h1>
+    <a href="/">Επιστροφή στις Λίστες Μουσικής</a>
 
     <form action="/search/{{ playlist.id }}" method="post">
         Αναζήτηση στο Spotify: <input type="text" name="query" placeholder="Αναζήτηση τραγουδιού" value="{{ query }}">
