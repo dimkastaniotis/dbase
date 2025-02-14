@@ -19,11 +19,17 @@ CLIENT_SECRET = os.environ.get('SPOTIPY_CLIENT_SECRET')
 client_credentials_manager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-# Μοντέλο Τραγουδιού
+# Μοντέλα Βάσης Δεδομένων
+class Playlist(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200))
+    songs = db.relationship('Song', backref='playlist', lazy=True)
+
 class Song(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200))
     artist = db.Column(db.String(200))
+    playlist_id = db.Column(db.Integer, db.ForeignKey('playlist.id'), nullable=False)
 
 # Συναρτήσεις Spotify
 def search_spotify(query):
@@ -41,34 +47,50 @@ def search_spotify(query):
 # Routes
 @app.route('/')
 def index():
+    playlists = Playlist.query.all()
+    return render_template('index.html', playlists=playlists)
+
+@app.route('/create_playlist', methods=['POST'])
+def create_playlist():
+    name = request.form['name']
+    playlist = Playlist(name=name)
+    db.session.add(playlist)
+    db.session.commit()
+    return redirect(url_for('index'))
+
+@app.route('/playlist/<playlist_id>')
+def playlist(playlist_id):
+    playlist = Playlist.query.get(int(playlist_id))
+    songs = Song.query.filter_by(playlist_id=playlist_id).all()
     query = request.args.get('query', '')  # Παίρνουμε το query από τα arguments
-    songs = Song.query.all()
-    search_results = search_spotify(query) if query else None  # Κάνουμε την αναζήτηση μόνο αν υπάρχει query
-    return render_template('index.html', songs=songs, search_results=search_results, query=query)
+    search_results = search_spotify(query) if query else None
+    return render_template('playlist.html', playlist=playlist, songs=songs, search_results=search_results, query=query)
 
-@app.route('/search', methods=['POST'])
-def search():
+@app.route('/search/<playlist_id>', methods=['POST'])
+def search(playlist_id):
     query = request.form['query']
+    playlist = Playlist.query.get(int(playlist_id))
     results = search_spotify(query)
-    return render_template('index.html', songs=Song.query.all(), search_results=results, query=query)
+    return render_template('playlist.html', playlist=playlist, songs=Song.query.filter_by(playlist_id=playlist_id).all(), search_results=results, query=query)
 
-@app.route('/add', methods=['POST'])
-def add():
+
+@app.route('/add/<playlist_id>', methods=['POST'])
+def add(playlist_id):
     title = request.form['title']
     artist = request.form['artist']
-    query = request.form.get('query', '')  # Παίρνουμε το query αναζήτησης
-    song = Song(title=title, artist=artist)
+    query = request.form.get('query', '')
+    song = Song(title=title, artist=artist, playlist_id=playlist_id)
     db.session.add(song)
     db.session.commit()
-    # Επιστρέφουμε στην index με το query αναζήτησης
-    return redirect(url_for('index', query=query))
+    return redirect(url_for('playlist', playlist_id=playlist_id, query=query))
 
 @app.route('/delete/<id>')
 def delete(id):
     song = Song.query.get(int(id))
+    playlist_id = song.playlist_id
     db.session.delete(song)
     db.session.commit()
-    return redirect(url_for('index'))
+    return redirect(url_for('playlist', playlist_id=playlist_id))
 
 #Δημιουργία των πινάκων
 with app.app_context():
