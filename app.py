@@ -44,21 +44,6 @@ def search_spotify(query):
         songs.append(song)
     return songs
 
-def get_top_songs():
-    # ID της playlist "Top που ακουσα τελευταία"
-    playlist_id = '37i9dQZEVXbMDoHDwVN2tF'
-    # Παίρνουμε τα tracks από την playlist
-    results = sp.playlist_items(playlist_id)
-    tracks = results['items']
-    top_songs = []
-    for track in tracks:
-        song = {
-            'title': track['track']['name'],
-            'artist': track['track']['artists'][0]['name']
-        }
-        top_songs.append(song)
-    return top_songs
-
 # Routes
 @app.route('/')
 def index():
@@ -105,11 +90,6 @@ def delete(id):
     db.session.delete(song)
     db.session.commit()
     return redirect(url_for('playlist', playlist_id=playlist_id))
-
-@app.route('/popular')
-def popular():
-    top_songs = get_top_songs()
-    return render_template('popular.html', top_songs=top_songs)
 
 #Δημιουργία των πινάκων
 with app.app_context():
