@@ -45,8 +45,8 @@ def search_spotify(query):
     return songs
 
 def get_top_songs():
-    # ID της playlist "Top 50 Global"
-    playlist_id = '37i9dQZEVXbMDoHDwVN2tF'
+    # ID της playlist "Top που ακουσα τελευταία"
+    playlist_id = '3OwTcD9Z1VAPKCCgtLLR5B'
     # Παίρνουμε τα tracks από την playlist
     results = sp.playlist_items(playlist_id)
     tracks = results['items']
