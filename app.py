@@ -41,23 +41,27 @@ def search_spotify(query):
 # Routes
 @app.route('/')
 def index():
+    query = request.args.get('query', '')  # Παίρνουμε το query από τα arguments
     songs = Song.query.all()
-    return render_template('index.html', songs=songs)
+    search_results = search_spotify(query) if query else None  # Κάνουμε την αναζήτηση μόνο αν υπάρχει query
+    return render_template('index.html', songs=songs, search_results=search_results, query=query)
 
 @app.route('/search', methods=['POST'])
 def search():
     query = request.form['query']
     results = search_spotify(query)
-    return render_template('index.html', songs=Song.query.all(), search_results=results)
+    return render_template('index.html', songs=Song.query.all(), search_results=results, query=query)
 
 @app.route('/add', methods=['POST'])
 def add():
     title = request.form['title']
     artist = request.form['artist']
+    query = request.form.get('query', '')  # Παίρνουμε το query αναζήτησης
     song = Song(title=title, artist=artist)
     db.session.add(song)
     db.session.commit()
-    return redirect(url_for('index'))
+    # Επιστρέφουμε στην index με το query αναζήτησης
+    return redirect(url_for('index', query=query))
 
 @app.route('/delete/<id>')
 def delete(id):
