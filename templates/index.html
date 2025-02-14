@@ -6,11 +6,26 @@
 <body>
     <h1>Η Μουσική Μου Συλλογή</h1>
 
-    <form action="/add" method="post">
-        Τίτλος: <input type="text" name="title" placeholder="Τίτλος τραγουδιού"><br>
-        Καλλιτέχνης: <input type="text" name="artist" placeholder="Καλλιτέχνης"><br>
-        <button type="submit">Προσθήκη Τραγουδιού</button>
+    <form action="/search" method="post">
+        Αναζήτηση στο Spotify: <input type="text" name="query" placeholder="Αναζήτηση τραγουδιού">
+        <button type="submit">Αναζήτηση</button>
     </form>
+
+    {% if search_results %}
+    <h2>Αποτελέσματα Αναζήτησης</h2>
+    <ul>
+        {% for song in search_results %}
+        <li>
+            {{ song.title }} - {{ song.artist }}
+            <form action="/add" method="post">
+                <input type="hidden" name="title" value="{{ song.title }}">
+                <input type="hidden" name="artist" value="{{ song.artist }}">
+                <button type="submit">Προσθήκη στη Συλλογή</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 
     <h2>Λίστα Τραγουδιών</h2>
     <ul>
