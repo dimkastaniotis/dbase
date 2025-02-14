@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Δημοφιλή Τραγούδια</title>
+</head>
+<body>
+    <h1>Δημοφιλή Τραγούδια</h1>
+    <ul>
+        {% for song in top_songs %}
+        <li>
+            {{ song.title }} - {{ song.artist }}
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="/">Επιστροφή στις Λίστες</a>
+</body>
+</html>
